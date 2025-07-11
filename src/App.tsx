@@ -5,6 +5,7 @@ interface CalculatorState {
   previousValue: number | null;
   operation: string | null;
   waitingForNumber: boolean;
+  memory: number;
 }
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     previousValue: null,
     operation: null,
     waitingForNumber: false,
+    memory: 0,
   });
 
   const [dark, setDark] = useState(false);
@@ -108,6 +110,49 @@ function App() {
     });
   };
 
+  const memoryClear = () => {
+    setState({
+      ...state,
+      memory: 0,
+    });
+  };
+
+  const memoryRecall = () => {
+    setState({
+      ...state,
+      display: String(state.memory),
+      waitingForNumber: true,
+    });
+  };
+
+  const memoryAdd = () => {
+    const value = parseFloat(state.display);
+    setState({
+      ...state,
+      memory: state.memory + value,
+      waitingForNumber: true,
+    });
+  };
+
+  const memorySubtract = () => {
+    const value = parseFloat(state.display);
+    setState({
+      ...state,
+      memory: state.memory - value,
+      waitingForNumber: true,
+    });
+  };
+
+  const toggleSign = () => {
+    if (state.display !== '0') {
+      const value = parseFloat(state.display) * -1;
+      setState({
+        ...state,
+        display: String(value),
+      });
+    }
+  };
+
   const inputDecimal = () => {
     if (state.waitingForNumber) {
       setState({
@@ -125,7 +170,7 @@ function App() {
 
   const handleKeyPress = (event: KeyboardEvent) => {
     const { key } = event;
-    
+
     if (key >= '0' && key <= '9') {
       inputNumber(key);
     } else if (key === '+' || key === '-' || key === '*' || key === '/') {
@@ -138,6 +183,16 @@ function App() {
       clearEntry();
     } else if (key === '.') {
       inputDecimal();
+    } else if (key === 's') {
+      toggleSign();
+    } else if (key === 'm') {
+      memoryAdd();
+    } else if (key === 'n') {
+      memorySubtract();
+    } else if (key === 'r') {
+      memoryRecall();
+    } else if (key === 'c') {
+      memoryClear();
     }
   };
 
@@ -204,49 +259,40 @@ function App() {
         </div>
 
         <div className="grid grid-cols-4 gap-3">
+          {/* Memory Row */}
+          <Button onClick={memoryAdd}>M+</Button>
+          <Button onClick={memorySubtract}>M-</Button>
+          <Button onClick={memoryRecall}>MR</Button>
+          <Button onClick={memoryClear}>MC</Button>
+
           {/* Row 1 */}
-          <Button onClick={clearDisplay} variant="clear" className="col-span-2">
-            AC
-          </Button>
-          <Button onClick={clearEntry} variant="clear">
-            CE
-          </Button>
-          <Button onClick={() => inputOperation('/')} variant="operation">
-            ÷
-          </Button>
+          <Button onClick={clearDisplay} variant="clear">AC</Button>
+          <Button onClick={clearEntry} variant="clear">CE</Button>
+          <Button onClick={toggleSign}>±</Button>
+          <Button onClick={() => inputOperation('/')} variant="operation">÷</Button>
 
           {/* Row 2 */}
           <Button onClick={() => inputNumber('7')}>7</Button>
           <Button onClick={() => inputNumber('8')}>8</Button>
           <Button onClick={() => inputNumber('9')}>9</Button>
-          <Button onClick={() => inputOperation('*')} variant="operation">
-            ×
-          </Button>
+          <Button onClick={() => inputOperation('*')} variant="operation">×</Button>
 
           {/* Row 3 */}
           <Button onClick={() => inputNumber('4')}>4</Button>
           <Button onClick={() => inputNumber('5')}>5</Button>
           <Button onClick={() => inputNumber('6')}>6</Button>
-          <Button onClick={() => inputOperation('-')} variant="operation">
-            −
-          </Button>
+          <Button onClick={() => inputOperation('-')} variant="operation">−</Button>
 
           {/* Row 4 */}
           <Button onClick={() => inputNumber('1')}>1</Button>
           <Button onClick={() => inputNumber('2')}>2</Button>
           <Button onClick={() => inputNumber('3')}>3</Button>
-          <Button onClick={() => inputOperation('+')} variant="operation">
-            +
-          </Button>
+          <Button onClick={() => inputOperation('+')} variant="operation">+</Button>
 
           {/* Row 5 */}
-          <Button onClick={() => inputNumber('0')} className="col-span-2">
-            0
-          </Button>
+          <Button onClick={() => inputNumber('0')} className="col-span-2">0</Button>
           <Button onClick={inputDecimal}>.</Button>
-          <Button onClick={performCalculation} variant="equals">
-            =
-          </Button>
+          <Button onClick={performCalculation} variant="equals">=</Button>
         </div>
 
         <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
