@@ -15,6 +15,14 @@ function App() {
     waitingForNumber: false,
   });
 
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+  }, [dark]);
+
+  const toggleDarkMode = () => setDark(!dark);
+
   const inputNumber = (num: string) => {
     if (state.waitingForNumber) {
       setState({
@@ -152,10 +160,14 @@ function App() {
     const baseClasses = "h-16 text-xl font-semibold rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2";
     
     const variantClasses = {
-      default: "bg-gray-100 hover:bg-gray-200 text-gray-800 focus:ring-gray-300",
-      operation: "bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-300",
-      clear: "bg-red-500 hover:bg-red-600 text-white focus:ring-red-300",
-      equals: "bg-green-500 hover:bg-green-600 text-white focus:ring-green-300"
+      default:
+        "bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 focus:ring-gray-300 dark:focus:ring-gray-600",
+      operation:
+        "bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700",
+      clear:
+        "bg-red-500 hover:bg-red-600 text-white focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700",
+      equals:
+        "bg-green-500 hover:bg-green-600 text-white focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700"
     };
 
     return (
@@ -169,10 +181,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-700 flex items-center justify-center p-4 relative">
+      <button
+        onClick={toggleDarkMode}
+        className="absolute top-4 right-4 text-2xl focus:outline-none"
+        aria-label="Toggle dark mode"
+      >
+        {dark ? '☀️' : '🌙'}
+      </button>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-sm">
         <div className="mb-6">
-          <div className="bg-gray-900 rounded-lg p-4 mb-2">
+          <div className="bg-gray-900 dark:bg-gray-700 rounded-lg p-4 mb-2">
             <div className="text-right text-3xl font-mono text-white min-h-[2.5rem] flex items-center justify-end overflow-hidden">
               {state.display}
             </div>
@@ -230,7 +249,7 @@ function App() {
           </Button>
         </div>
 
-        <div className="mt-4 text-center text-sm text-gray-500">
+        <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
           Use keyboard for faster input
         </div>
       </div>
